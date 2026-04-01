@@ -1,6 +1,5 @@
 chcp 65001
 
-setlocal
 @echo off
 
 echo =============================
@@ -15,6 +14,7 @@ for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /r "IPv4"') do (
   set "IP=!RAW: =!"
   echo  PC のIPアドレス: !IP!
   echo  iPad からのアクセス URL: http://!IP!:3000
+  endlocal
 )
 
 echo.
@@ -24,6 +24,7 @@ echo  終了するには Ctrl+C を押してください。
 echo =============================
 echo.
 
+setlocal
 cd /d "%~dp0server"
 node index.js
 endlocal
