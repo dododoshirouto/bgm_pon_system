@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>BGM PON</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>BGM PON</h1>
+    <button class="header-btn" id="btn-open-settings">設定</button>
+  </header>
+
+  <div id="grid"></div>
+
+  <!-- 設定モーダル（iframeで開くので再生が止まらない） -->
+  <div id="settings-modal">
+    <div id="settings-modal-inner">
+      <div id="settings-modal-bar">
+        <span>設定</span>
+        <button id="btn-close-settings">✕</button>
+      </div>
+      <iframe id="settings-iframe" src="" title="設定"></iframe>
+    </div>
+  </div>
+
+  <script>
+    if ('addEventListener' in document) {
+      document.addEventListener('DOMContentLoaded', function () {
+        FastClick.attach(document.body);
+      }, false);
+    }
+
+    const modal = document.getElementById('settings-modal');
+    const iframe = document.getElementById('settings-iframe');
+
+    document.getElementById('btn-open-settings').addEventListener('click', () => {
+      iframe.src = '/settings.html';
+      modal.classList.add('open');
+    });
+
+    document.getElementById('btn-close-settings').addEventListener('click', () => {
+      modal.classList.remove('open');
+      iframe.src = '';
+      // 設定が変わっている可能性があるのでボタン設定をリロード
+      if (window.__reloadButtons) window.__reloadButtons();
+    });
+  </script>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BGM PON - 設定</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>設定</h1>
+    <a href="/">← 戻る</a>
+  </header>
+
+  <div id="settings-container">
+
+    <!-- 音声ファイルアップロード -->
+    <div class="setting-card">
+      <h3>音声ファイルのインポート（PCから）</h3>
+      <div id="upload-box" class="upload-box">
+        <div style="font-size:32px">＋</div>
+        <p>クリックまたはドラッグ＆ドロップ<br>MP3 / WAV / OGG</p>
+        <input type="file" id="file-input" accept=".mp3,.wav,.ogg" multiple style="display:none">
+      </div>
+      <div id="file-list"></div>
+    </div>
+
+    <!-- ボタングリッド（各ボタンにインライン設定） -->
+    <div class="setting-card">
+      <h3>ボタン設定</h3>
+      <div id="button-grid"></div>
+    </div>
+
+  </div>
+
+  <script>
+    if ('addEventListener' in document) {
+      document.addEventListener('DOMContentLoaded', function () {
+        FastClick.attach(document.body);
+      }, false);
+    }
+  </script>
+  <script type="module" src="/js/settings.js"></script>
+</body>
+</html>
