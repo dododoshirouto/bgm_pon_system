@@ -104,7 +104,8 @@ function renderGrid() {
 
     const label = document.createElement('span');
     label.className = 'pad-label';
-    label.textContent = btn.label || (btn.file ? btn.file.replace(/\.[^.]+$/, '') : `PAD ${btn.id + 1}`);
+    const displayLabel = btn.label || (btn.file ? btn.file.replace(/\.[^.]+$/, '') : `PAD ${btn.id + 1}`);
+    label.textContent = btn.loop ? `↻ ${displayLabel}` : displayLabel;
 
     // プログレスバー
     const progressWrap = document.createElement('div');

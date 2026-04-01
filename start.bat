@@ -1,31 +1,26 @@
-chcp 65001
-
 @echo off
+setlocal enabledelayedexpansion
 
 echo =============================
-echo  BGM PON SYSTEM - 起動中...
+echo  BGM PON SYSTEM
 echo =============================
 echo.
 
-:: IPv4アドレスを取得（192.168. または 10. または 172. のLAN IP）
-for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /r "IPv4"') do (
+for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr "IPv4"') do (
   set "RAW=%%a"
-  setlocal enabledelayedexpansion
   set "IP=!RAW: =!"
-  echo  PC のIPアドレス: !IP!
-  echo  iPad からのアクセス URL: http://!IP!:3000
-  endlocal
+  echo  iPad URL: http://!IP!:3000
 )
 
 echo.
-echo  PC からのアクセス URL: http://localhost:3000
+echo  PC URL: http://localhost:3000
 echo.
-echo  終了するには Ctrl+C を押してください。
+echo  Stop: Ctrl+C
 echo =============================
 echo.
 
-setlocal
 cd /d "%~dp0server"
 node index.js
 endlocal
+cd /d "%~dp0"
 pause
