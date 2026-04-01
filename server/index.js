@@ -14,16 +14,34 @@ const audioDir = path.join(dataDir, 'audio');
 const buttonsFile = path.join(dataDir, 'buttons.json');
 
 if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
+
+// 既存の buttons.json に新フィールドを補完するマイグレーション
+function migrateButtons(data) {
+  let changed = false;
+  data.buttons = data.buttons.map(b => {
+    const defaults = { loop: false, color: null };
+    const patched = { ...defaults, ...b };
+    if (JSON.stringify(patched) !== JSON.stringify(b)) changed = true;
+    return patched;
+  });
+  return { data, changed };
+}
+
 if (!fs.existsSync(buttonsFile)) {
   const initial = { buttons: Array.from({ length: 16 }, (_, i) => ({
     id: i,
     label: '',
     file: null,
     mode: '2btn',
+    loop: false,
+    color: null,
     fadeIn: { enabled: false, duration: 1 },
     fadeOut: { enabled: false, duration: 1 },
   }))};
   fs.writeFileSync(buttonsFile, JSON.stringify(initial, null, 2));
+} else {
+  const { data, changed } = migrateButtons(JSON.parse(fs.readFileSync(buttonsFile, 'utf-8')));
+  if (changed) fs.writeFileSync(buttonsFile, JSON.stringify(data, null, 2));
 }
 
 app.use(express.json());

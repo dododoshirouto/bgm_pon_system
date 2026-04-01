@@ -1,6 +1,18 @@
 let buttons = [];
 let audioFiles = [];
 
+// カラープリセット定義（app.jsと同期させる）
+const COLOR_PRESETS = [
+  { id: 'default', label: 'デフォルト', bg: '#2c2c2e', accent: '#ffffff' },
+  { id: 'blue',    label: 'ブルー',     bg: '#0a2a4a', accent: '#4da6ff' },
+  { id: 'green',   label: 'グリーン',   bg: '#0d2e1a', accent: '#30d158' },
+  { id: 'orange',  label: 'オレンジ',   bg: '#2e1800', accent: '#ff9f0a' },
+  { id: 'red',     label: 'レッド',     bg: '#2e0a0a', accent: '#ff453a' },
+  { id: 'purple',  label: 'パープル',   bg: '#1e0a2e', accent: '#bf5af2' },
+  { id: 'pink',    label: 'ピンク',     bg: '#2e0a1a', accent: '#ff375f' },
+  { id: 'teal',    label: 'ティール',   bg: '#001e26', accent: '#5ac8fa' },
+];
+
 async function loadData() {
   const [btnRes, audioRes] = await Promise.all([
     fetch('/api/buttons'),
@@ -31,7 +43,6 @@ async function patchButton(id, patch) {
 
 function renderButtonGrid() {
   const grid = document.getElementById('button-grid');
-  // 開いているパネルのIDを記憶して再描画後に復元
   const openId = (() => {
     const open = grid.querySelector('.inline-panel[style*="block"]');
     return open ? parseInt(open.id.replace('panel-', ''), 10) : null;
@@ -43,7 +54,6 @@ function renderButtonGrid() {
     const wrapper = document.createElement('div');
     wrapper.className = 'btn-wrapper';
     wrapper.dataset.id = btn.id;
-
     wrapper.appendChild(buildPad(btn));
     wrapper.appendChild(buildPanel(btn));
     grid.appendChild(wrapper);
@@ -56,32 +66,33 @@ function renderButtonGrid() {
 }
 
 function buildPad(btn) {
+  const preset = COLOR_PRESETS.find(p => p.id === btn.color) || COLOR_PRESETS[0];
   const pad = document.createElement('div');
   pad.className = 'pad-setting' + (!btn.file ? ' disabled' : '');
+  pad.style.setProperty('--pad-bg', preset.bg);
+  pad.style.setProperty('--pad-accent', preset.accent);
 
-  // PAD番号 + 詳細トグル（タップでアコーディオン）
+  // PAD番号 + 詳細ボタン
   const header = document.createElement('div');
   header.className = 'pad-header';
   header.innerHTML = `<span class="pad-num">PAD ${btn.id + 1}</span><span class="pad-detail-btn">…</span>`;
   header.addEventListener('click', () => togglePanel(btn.id));
 
-  // ラベル入力（直接編集・blur時保存）
+  // ラベル入力
   const labelInput = document.createElement('input');
   labelInput.type = 'text';
   labelInput.className = 'pad-label-input';
   labelInput.value = btn.label || '';
   labelInput.placeholder = btn.file ? btn.file.replace(/\.[^.]+$/, '') : `PAD ${btn.id + 1}`;
   labelInput.maxLength = 20;
-  labelInput.addEventListener('click', e => e.stopPropagation()); // アコーディオンが開かないように
+  labelInput.addEventListener('click', e => e.stopPropagation());
   labelInput.addEventListener('blur', async () => {
     try {
       await patchButton(btn.id, { label: labelInput.value });
-    } catch (e) {
-      alert(e.message);
-    }
+    } catch (e) { alert(e.message); }
   });
 
-  // フェードIN/OUTトグル（直接編集・即時保存）
+  // FI/FO/LOOP トグル
   const fadeRow = document.createElement('div');
   fadeRow.className = 'pad-fade-row';
 
@@ -95,9 +106,15 @@ function buildPad(btn) {
       await patchButton(btn.id, { fadeOut: { ...buttons.find(b => b.id === btn.id).fadeOut, enabled: checked } });
     } catch (e) { alert(e.message); }
   });
+  const loopToggle = buildMiniToggle('↻', btn.loop || false, async (checked) => {
+    try {
+      await patchButton(btn.id, { loop: checked });
+    } catch (e) { alert(e.message); }
+  });
 
   fadeRow.appendChild(fiToggle);
   fadeRow.appendChild(foToggle);
+  fadeRow.appendChild(loopToggle);
 
   pad.appendChild(header);
   pad.appendChild(labelInput);
@@ -118,7 +135,6 @@ function buildMiniToggle(labelText, checked, onChange) {
 
   wrap.innerHTML = `<span class="mini-toggle-label">${labelText}</span>`;
   wrap.insertBefore(input, wrap.firstChild);
-
   return wrap;
 }
 
@@ -131,6 +147,15 @@ function buildPanel(btn) {
   const fileOptions = audioFiles.map(f =>
     `<option value="${f}"${f === btn.file ? ' selected' : ''}>${f}</option>`
   ).join('');
+
+  const colorSwatches = COLOR_PRESETS.map(p => `
+    <div class="color-swatch${btn.color === p.id || (!btn.color && p.id === 'default') ? ' selected' : ''}"
+         data-color="${p.id}"
+         style="background:${p.bg};border-color:${p.accent}"
+         title="${p.label}">
+      <span style="color:${p.accent}">■</span>
+    </div>
+  `).join('');
 
   panel.innerHTML = `
     <div class="panel-field">
@@ -161,8 +186,20 @@ function buildPanel(btn) {
         <span class="unit">秒</span>
       </div>
     </div>
+    <div class="panel-field">
+      <label>カラー</label>
+      <div class="color-swatch-row">${colorSwatches}</div>
+    </div>
     <button class="btn-save">保存</button>
   `;
+
+  // カラースウォッチ選択
+  panel.querySelectorAll('.color-swatch').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+      panel.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      swatch.classList.add('selected');
+    });
+  });
 
   panel.querySelector('.btn-save').addEventListener('click', () => savePanel(panel, btn.id));
   return panel;
@@ -180,12 +217,14 @@ function togglePanel(id) {
 
 async function savePanel(panel, id) {
   const btn = buttons.find(b => b.id === id);
-  // ラベルはパッド上の入力欄から直接読む（blur前の未保存テキストも拾う）
   const labelInput = panel.previousElementSibling?.querySelector('.pad-label-input');
+  const selectedColor = panel.querySelector('.color-swatch.selected')?.dataset.color || null;
+
   const patch = {
     label: labelInput ? labelInput.value : btn.label,
     file: panel.querySelector('.select-file').value || null,
     mode: panel.querySelector('.select-mode').value,
+    color: selectedColor === 'default' ? null : selectedColor,
     fadeIn: {
       enabled: btn.fadeIn?.enabled || false,
       duration: parseFloat(panel.querySelector('.input-fadein-sec').value) || 1,

@@ -53,24 +53,28 @@ header button.header-btn {
 
 /* パッドボタン */
 .pad {
+  --pad-bg: #2c2c2e;
+  --pad-accent: #ffffff;
   aspect-ratio: 1;
   border-radius: 12px;
   border: none;
-  background: #2c2c2e;
-  color: #fff;
+  background: var(--pad-bg);
+  color: var(--pad-accent);
   font-size: 13px;
   font-weight: 600;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   cursor: pointer;
-  transition: background 0.1s, transform 0.05s;
-  padding: 8px;
+  transition: filter 0.1s, transform 0.05s;
+  padding: 8px 8px 6px;
   text-align: center;
   word-break: break-all;
   line-height: 1.3;
+  position: relative;
+  overflow: hidden;
 }
 
 .pad:active {
@@ -78,17 +82,52 @@ header button.header-btn {
 }
 
 .pad.playing {
-  background: #0a84ff;
+  filter: brightness(1.4);
 }
 
 .pad.disabled {
   background: #1c1c1e;
-  color: #444;
+  color: #333;
   cursor: default;
 }
 
 .pad .pad-icon {
-  font-size: 20px;
+  font-size: 18px;
+}
+
+.pad .pad-label {
+  font-size: 12px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* プログレスバー */
+.pad-progress-wrap {
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.pad-progress {
+  height: 100%;
+  width: 0%;
+  background: var(--pad-accent);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+/* 残り時間 */
+.pad-time {
+  font-size: 10px;
+  color: var(--pad-accent);
+  opacity: 0.8;
+  min-height: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ==============================
@@ -181,19 +220,22 @@ header button.header-btn {
 }
 
 .pad-setting {
+  --pad-bg: #1c1c1e;
+  --pad-accent: #ffffff;
   width: 100%;
   border-radius: 10px;
-  background: #1c1c1e;
-  color: #fff;
+  background: var(--pad-bg);
+  color: var(--pad-accent);
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .pad-setting.disabled {
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 /* PAD番号 + 詳細ボタン */
@@ -385,6 +427,35 @@ header button.header-btn {
   font-size: 18px;
   cursor: pointer;
   padding: 0 4px;
+}
+
+/* カラースウォッチ */
+.color-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.color-swatch:active {
+  transform: scale(0.9);
+}
+
+.color-swatch.selected {
+  box-shadow: 0 0 0 3px #fff;
+  transform: scale(1.1);
 }
 
 /* フィールド共通 */

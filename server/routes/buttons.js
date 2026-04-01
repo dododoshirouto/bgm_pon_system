@@ -20,7 +20,7 @@ router.put('/:id', (req, res) => {
   const index = data.buttons.findIndex(b => b.id === id);
   if (index === -1) return res.status(404).json({ error: 'ボタンが見つかりません' });
 
-  const allowed = ['label', 'file', 'mode', 'fadeIn', 'fadeOut'];
+  const allowed = ['label', 'file', 'mode', 'loop', 'color', 'fadeIn', 'fadeOut'];
   allowed.forEach(key => {
     if (req.body[key] !== undefined) data.buttons[index][key] = req.body[key];
   });

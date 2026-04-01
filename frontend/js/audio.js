@@ -1,25 +1,23 @@
 /**
  * Web Audio API ラッパー
- * フェードイン/アウト対応、iPad Safari unlock対応
+ * フェードイン/アウト、ループ、プログレス取得対応
+ * iPad Safari AudioContext unlock対応
  */
 
 let ctx = null;
-const sources = {}; // buttonId -> { source, gainNode }
+// buttonId -> { source, gainNode, startTime, buffer, loop }
+const sources = {};
 
 function getContext() {
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
   return ctx;
 }
 
-// iPad Safari: ユーザータップで AudioContext を unlock
 export function unlockAudio() {
   const context = getContext();
-  if (context.state === 'suspended') {
-    context.resume();
-  }
+  if (context.state === 'suspended') context.resume();
 }
 
-// 音声バッファキャッシュ
 const bufferCache = {};
 
 async function loadBuffer(filename) {
@@ -34,15 +32,11 @@ async function loadBuffer(filename) {
 
 /**
  * 再生
- * @param {number} buttonId
- * @param {string} filename
- * @param {{ enabled: boolean, duration: number }} fadeIn
  */
-export async function play(buttonId, filename, fadeIn = { enabled: false, duration: 1 }) {
+export async function play(buttonId, filename, fadeIn = { enabled: false, duration: 1 }, loop = false) {
   const context = getContext();
   if (context.state === 'suspended') await context.resume();
 
-  // 既に再生中なら止める
   stop(buttonId, { enabled: false, duration: 0 });
 
   const buffer = await loadBuffer(filename);
@@ -50,6 +44,7 @@ export async function play(buttonId, filename, fadeIn = { enabled: false, durati
   const gainNode = context.createGain();
 
   source.buffer = buffer;
+  source.loop = loop;
   source.connect(gainNode);
   gainNode.connect(context.destination);
 
@@ -61,17 +56,16 @@ export async function play(buttonId, filename, fadeIn = { enabled: false, durati
   }
 
   source.start(0);
-  sources[buttonId] = { source, gainNode };
+  sources[buttonId] = { source, gainNode, startTime: context.currentTime, buffer, loop };
 
   source.onended = () => {
+    // ループ中は onended は発火しない
     delete sources[buttonId];
   };
 }
 
 /**
  * 停止
- * @param {number} buttonId
- * @param {{ enabled: boolean, duration: number }} fadeOut
  */
 export function stop(buttonId, fadeOut = { enabled: false, duration: 1 }) {
   const entry = sources[buttonId];
@@ -98,8 +92,26 @@ export function isPlaying(buttonId) {
 }
 
 /**
- * 複数ファイルを事前にバッファへ読み込む
- * @param {string[]} filenames
+ * 再生プログレス取得
+ * @returns {{ elapsed: number, duration: number, remaining: number } | null}
+ */
+export function getProgress(buttonId) {
+  const entry = sources[buttonId];
+  if (!entry) return null;
+
+  const context = getContext();
+  const rawElapsed = context.currentTime - entry.startTime;
+  const duration = entry.buffer.duration;
+
+  // ループ中は duration 内での位置
+  const elapsed = entry.loop ? rawElapsed % duration : Math.min(rawElapsed, duration);
+  const remaining = Math.max(0, duration - elapsed);
+
+  return { elapsed, duration, remaining, loop: entry.loop };
+}
+
+/**
+ * 複数ファイルのプリロード
  */
 export async function preloadAll(filenames) {
   await Promise.all(
