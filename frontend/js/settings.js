@@ -1,16 +1,16 @@
 let buttons = [];
 let audioFiles = [];
 
-// カラープリセット定義（app.jsと同期させる）
+// カラープリセット定義（app.jsと同期させる）パステルカラーテーマ
 const COLOR_PRESETS = [
-  { id: 'default', label: 'デフォルト', bg: '#2c2c2e', accent: '#ffffff' },
-  { id: 'blue',    label: 'ブルー',     bg: '#0a2a4a', accent: '#4da6ff' },
-  { id: 'green',   label: 'グリーン',   bg: '#0d2e1a', accent: '#30d158' },
-  { id: 'orange',  label: 'オレンジ',   bg: '#2e1800', accent: '#ff9f0a' },
-  { id: 'red',     label: 'レッド',     bg: '#2e0a0a', accent: '#ff453a' },
-  { id: 'purple',  label: 'パープル',   bg: '#1e0a2e', accent: '#bf5af2' },
-  { id: 'pink',    label: 'ピンク',     bg: '#2e0a1a', accent: '#ff375f' },
-  { id: 'teal',    label: 'ティール',   bg: '#001e26', accent: '#5ac8fa' },
+  { id: 'default', label: 'デフォルト', bg: '#3d3347', accent: '#f0e6f6' },
+  { id: 'blue',    label: 'ブルー',     bg: '#2d3a4f', accent: '#a0c4f1' },
+  { id: 'green',   label: 'グリーン',   bg: '#2d3f35', accent: '#a8d8b9' },
+  { id: 'orange',  label: 'オレンジ',   bg: '#3f3530', accent: '#f0c8a0' },
+  { id: 'red',     label: 'レッド',     bg: '#3f2d2d', accent: '#f4a0a0' },
+  { id: 'purple',  label: 'パープル',   bg: '#352d42', accent: '#b39ddb' },
+  { id: 'pink',    label: 'ピンク',     bg: '#3f2d38', accent: '#f0a0c8' },
+  { id: 'teal',    label: 'ティール',   bg: '#2d3a3f', accent: '#a0d8e8' },
 ];
 
 async function loadData() {
@@ -304,11 +304,11 @@ async function init() {
     fileInput.value = '';
   });
 
-  uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.style.borderColor = '#0a84ff'; });
-  uploadBox.addEventListener('dragleave', () => { uploadBox.style.borderColor = '#444'; });
+  uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.style.borderColor = '#b39ddb'; });
+  uploadBox.addEventListener('dragleave', () => { uploadBox.style.borderColor = '#5e4f70'; });
   uploadBox.addEventListener('drop', e => {
     e.preventDefault();
-    uploadBox.style.borderColor = '#444';
+    uploadBox.style.borderColor = '#5e4f70';
     [...e.dataTransfer.files].forEach(uploadFile);
   });
 }

@@ -1,15 +1,15 @@
 import { play, stop, isPlaying, unlockAudio, preloadAll, getProgress } from './audio.js';
 
-// カラープリセット（id → CSS背景色）
+// カラープリセット（id → CSS背景色）パステルカラーテーマ
 export const COLOR_PRESETS = {
-  default: { bg: '#2c2c2e', accent: '#ffffff' },
-  blue:    { bg: '#0a2a4a', accent: '#4da6ff' },
-  green:   { bg: '#0d2e1a', accent: '#30d158' },
-  orange:  { bg: '#2e1800', accent: '#ff9f0a' },
-  red:     { bg: '#2e0a0a', accent: '#ff453a' },
-  purple:  { bg: '#1e0a2e', accent: '#bf5af2' },
-  pink:    { bg: '#2e0a1a', accent: '#ff375f' },
-  teal:    { bg: '#001e26', accent: '#5ac8fa' },
+  default: { bg: '#3d3347', accent: '#f0e6f6' },
+  blue:    { bg: '#2d3a4f', accent: '#a0c4f1' },
+  green:   { bg: '#2d3f35', accent: '#a8d8b9' },
+  orange:  { bg: '#3f3530', accent: '#f0c8a0' },
+  red:     { bg: '#3f2d2d', accent: '#f4a0a0' },
+  purple:  { bg: '#352d42', accent: '#b39ddb' },
+  pink:    { bg: '#3f2d38', accent: '#f0a0c8' },
+  teal:    { bg: '#2d3a3f', accent: '#a0d8e8' },
 };
 
 let buttons = [];

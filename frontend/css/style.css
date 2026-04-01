@@ -6,8 +6,8 @@
 }
 
 body {
-  background: #1a1a1a;
-  color: #fff;
+  background: #2b2433;
+  color: #f0e6f6;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   user-select: none;
   -webkit-user-select: none;
@@ -20,21 +20,22 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: #111;
-  border-bottom: 1px solid #333;
+  background: #231d2b;
+  border-bottom: 1px solid #4a3d5c;
 }
 
 header h1 {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.05em;
+  color: #e8d5f5;
 }
 
 header button.header-btn {
   background: none;
-  border: 1px solid #444;
+  border: 1px solid #7b6b8a;
   border-radius: 8px;
-  color: #aaa;
+  color: #c4b0d6;
   font-size: 14px;
   padding: 6px 12px;
   cursor: pointer;
@@ -53,8 +54,8 @@ header button.header-btn {
 
 /* パッドボタン */
 .pad {
-  --pad-bg: #2c2c2e;
-  --pad-accent: #ffffff;
+  --pad-bg: #3d3347;
+  --pad-accent: #f0e6f6;
   aspect-ratio: 1;
   border-radius: 12px;
   border: none;
@@ -86,8 +87,8 @@ header button.header-btn {
 }
 
 .pad.disabled {
-  background: #1c1c1e;
-  color: #333;
+  background: #2b2433;
+  color: #4a3d5c;
   cursor: default;
 }
 
@@ -107,7 +108,7 @@ header button.header-btn {
 .pad-progress-wrap {
   width: 100%;
   height: 3px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(240,230,246,0.15);
   border-radius: 2px;
   overflow: hidden;
   margin-top: 2px;
@@ -137,7 +138,7 @@ header button.header-btn {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(35, 29, 43, 0.85);
   z-index: 100;
   flex-direction: column;
 }
@@ -157,20 +158,21 @@ header button.header-btn {
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: #111;
-  border-bottom: 1px solid #333;
+  background: #231d2b;
+  border-bottom: 1px solid #4a3d5c;
   flex-shrink: 0;
 }
 
 #settings-modal-bar span {
   font-size: 16px;
   font-weight: 700;
+  color: #e8d5f5;
 }
 
 #settings-modal-bar button {
   background: none;
   border: none;
-  color: #fff;
+  color: #f0e6f6;
   font-size: 24px;
   cursor: pointer;
   padding: 0 4px;
@@ -181,7 +183,7 @@ header button.header-btn {
   flex: 1;
   width: 100%;
   border: none;
-  background: #1a1a1a;
+  background: #2b2433;
 }
 
 /* ==============================
@@ -194,7 +196,7 @@ header button.header-btn {
 }
 
 .setting-card {
-  background: #2c2c2e;
+  background: #3d3347;
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
@@ -202,7 +204,7 @@ header button.header-btn {
 
 .setting-card h3 {
   font-size: 14px;
-  color: #aaa;
+  color: #c4b0d6;
   margin-bottom: 12px;
 }
 
@@ -220,8 +222,8 @@ header button.header-btn {
 }
 
 .pad-setting {
-  --pad-bg: #1c1c1e;
-  --pad-accent: #ffffff;
+  --pad-bg: #2b2433;
+  --pad-accent: #f0e6f6;
   width: 100%;
   border-radius: 10px;
   background: var(--pad-bg);
@@ -231,7 +233,7 @@ header button.header-btn {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(240,230,246,0.08);
 }
 
 .pad-setting.disabled {
@@ -251,21 +253,21 @@ header button.header-btn {
 .pad-num {
   font-size: 12px;
   font-weight: 700;
-  color: #888;
+  color: #9b8aad;
 }
 
 .pad-detail-btn {
   font-size: 16px;
-  color: #555;
+  color: #7b6b8a;
 }
 
 /* ラベル入力（横に広がる） */
 .pad-label-input {
   flex: 1;
-  background: #2c2c2e;
-  border: 1px solid #444;
+  background: #3d3347;
+  border: 1px solid #5e4f70;
   border-radius: 8px;
-  color: #fff;
+  color: #f0e6f6;
   font-size: 14px;
   font-weight: 600;
   padding: 8px 10px;
@@ -273,7 +275,7 @@ header button.header-btn {
 }
 
 .pad-label-input::placeholder {
-  color: #555;
+  color: #7b6b8a;
 }
 
 /* フェードトグル行（大きく） */
@@ -289,13 +291,13 @@ header button.header-btn {
   align-items: center;
   gap: 4px;
   cursor: pointer;
-  background: #2c2c2e;
+  background: #3d3347;
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 13px;
   font-weight: 700;
-  color: #666;
-  border: 1px solid #444;
+  color: #7b6b8a;
+  border: 1px solid #5e4f70;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
   min-width: 52px;
   justify-content: center;
@@ -306,9 +308,9 @@ header button.header-btn {
 }
 
 .mini-toggle:has(input:checked) {
-  background: #0a84ff22;
-  border-color: #0a84ff;
-  color: #0a84ff;
+  background: rgba(179,157,219,0.15);
+  border-color: #b39ddb;
+  color: #b39ddb;
 }
 
 .mini-toggle-label {
@@ -317,7 +319,7 @@ header button.header-btn {
 
 /* インラインパネル（詳細設定） */
 .inline-panel {
-  background: #3a3a3c;
+  background: #4a3d5c;
   border-radius: 10px;
   padding: 14px;
   margin-top: 6px;
@@ -330,19 +332,20 @@ header button.header-btn {
 .panel-field label {
   display: block;
   font-size: 12px;
-  color: #aaa;
+  color: #c4b0d6;
   margin-bottom: 4px;
 }
 
 .panel-field select {
   width: 100%;
-  background: #1c1c1e;
-  border: 1px solid #555;
+  background: #2b2433;
+  border: 1px solid #7b6b8a;
   border-radius: 8px;
-  color: #fff;
+  color: #f0e6f6;
   font-size: 15px;
   padding: 8px 10px;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .panel-field .field-row {
@@ -353,24 +356,24 @@ header button.header-btn {
 
 .panel-field input[type="number"] {
   width: 80px;
-  background: #1c1c1e;
-  border: 1px solid #555;
+  background: #2b2433;
+  border: 1px solid #7b6b8a;
   border-radius: 8px;
-  color: #fff;
+  color: #f0e6f6;
   font-size: 15px;
   padding: 8px 10px;
 }
 
 .unit {
   font-size: 13px;
-  color: #aaa;
+  color: #c4b0d6;
 }
 
 .btn-save {
   width: 100%;
   padding: 14px;
-  background: #0a84ff;
-  color: #fff;
+  background: #b39ddb;
+  color: #1a1520;
   border: none;
   border-radius: 12px;
   font-size: 16px;
@@ -391,8 +394,8 @@ header button.header-btn {
    アップロードエリア
    ============================== */
 .upload-box {
-  background: #1c1c1e;
-  border: 2px dashed #444;
+  background: #2b2433;
+  border: 2px dashed #5e4f70;
   border-radius: 12px;
   padding: 24px;
   text-align: center;
@@ -400,7 +403,7 @@ header button.header-btn {
 }
 
 .upload-box p {
-  color: #aaa;
+  color: #c4b0d6;
   font-size: 14px;
   margin-top: 8px;
 }
@@ -413,7 +416,7 @@ header button.header-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #1c1c1e;
+  background: #2b2433;
   border-radius: 8px;
   padding: 10px 14px;
   margin-bottom: 8px;
@@ -423,7 +426,7 @@ header button.header-btn {
 .file-item button {
   background: none;
   border: none;
-  color: #ff453a;
+  color: #f4a0a0;
   font-size: 18px;
   cursor: pointer;
   padding: 0 4px;
@@ -454,7 +457,7 @@ header button.header-btn {
 }
 
 .color-swatch.selected {
-  box-shadow: 0 0 0 3px #fff;
+  box-shadow: 0 0 0 3px #f0e6f6;
   transform: scale(1.1);
 }
 
@@ -466,7 +469,7 @@ header button.header-btn {
 .field label {
   display: block;
   font-size: 13px;
-  color: #aaa;
+  color: #c4b0d6;
   margin-bottom: 4px;
 }
 
