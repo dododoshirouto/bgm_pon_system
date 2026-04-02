@@ -89,6 +89,7 @@ export function stop(buttonId, fadeOutOverride = null) {
   const context = getContext();
 
   if (fadeOut.enabled && fadeOut.duration > 0) {
+    entry.stopping = true;
     gainNode.gain.setValueAtTime(gainNode.gain.value, context.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + fadeOut.duration);
     setTimeout(() => {
@@ -121,7 +122,8 @@ export function stopAll(maxFadeDuration = 1) {
 }
 
 export function isPlaying(buttonId) {
-  return !!sources[buttonId];
+  const entry = sources[buttonId];
+  return !!(entry && !entry.stopping);
 }
 
 /**
@@ -130,7 +132,7 @@ export function isPlaying(buttonId) {
  */
 export function getProgress(buttonId) {
   const entry = sources[buttonId];
-  if (!entry) return null;
+  if (!entry || entry.stopping) return null;
 
   const context = getContext();
   const rawElapsed = context.currentTime - entry.startTime;
