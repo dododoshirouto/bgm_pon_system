@@ -13,6 +13,7 @@ body {
   -webkit-user-select: none;
   touch-action: manipulation;
   padding-top: 60px; /* ヘッダー固定用 */
+  padding-bottom: 50px; /* フッター固定用 */
 }
 
 /* ヘッダー */
@@ -505,4 +506,33 @@ header button.header-btn {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* ==============================
+   固定フッター
+   ============================== */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(35, 29, 43, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  text-align: center;
+  border-top: 1px solid #4a3d5c;
+  z-index: 40;
+}
+
+footer a {
+  color: #7b6b8a;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+
+footer a:hover {
+  color: #b39ddb;
 }
