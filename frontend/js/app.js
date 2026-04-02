@@ -1,4 +1,4 @@
-import { play, stop, isPlaying, unlockAudio, preloadAll, getProgress } from './audio.js';
+import { play, stop, isPlaying, unlockAudio, preloadAll, getProgress, stopAll } from './audio.js';
 
 // カラープリセット（id → CSS背景色）パステルカラーテーマ
 export const COLOR_PRESETS = {
@@ -30,6 +30,12 @@ async function init() {
   preloadAll(files);
   startPolling();
   requestAnimationFrame(updateProgress);
+
+  // AllKill
+  document.getElementById('btn-all-kill').addEventListener('click', () => {
+    stopAll(1);
+    buttons.forEach(b => updatePadState(b.id, false));
+  });
 }
 
 // 設定変更を100msごとに監視して自動更新
@@ -146,7 +152,7 @@ async function handleToggle(id) {
     stop(id, btn.fadeOut);
     updatePadState(id, false);
   } else {
-    await play(id, btn.file, btn.fadeIn, btn.loop);
+    await play(id, btn.file, btn.fadeIn, btn.fadeOut, btn.loop);
     updatePadState(id, true);
   }
 }
@@ -155,7 +161,7 @@ async function handlePlay(id) {
   unlockAudio();
   const btn = buttons.find(b => b.id === id);
   if (!btn || !btn.file) return;
-  await play(id, btn.file, btn.fadeIn, btn.loop);
+  await play(id, btn.file, btn.fadeIn, btn.fadeOut, btn.loop);
   updatePadState(id, true);
 }
 

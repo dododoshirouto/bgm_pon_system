@@ -12,15 +12,23 @@ body {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  padding-top: 60px; /* ヘッダー固定用 */
 }
 
 /* ヘッダー */
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: #231d2b;
+  background: rgba(35, 29, 43, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid #4a3d5c;
 }
 
@@ -37,8 +45,28 @@ header button.header-btn {
   border-radius: 8px;
   color: #c4b0d6;
   font-size: 14px;
-  padding: 6px 12px;
+  padding: 8px 12px;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* ALL KILL ボタン */
+.all-kill-btn {
+  background: #f44336 !important;
+  border: 1px solid #ff5252 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(244, 67, 54, 0.4);
+}
+
+.all-kill-btn:active {
+  background: #d32f2f !important;
+  transform: scale(0.92);
 }
 
 /* ==============================

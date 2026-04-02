@@ -5,8 +5,10 @@
  */
 
 let ctx = null;
-// buttonId -> { source, gainNode, startTime, buffer, loop }
+// buttonId -> { source, gainNode, startTime, buffer, loop, fadeOut }
 const sources = {};
+// buttonId -> Symbol (競合防止用)
+const pendingTokens = {};
 
 function getContext() {
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -33,13 +35,22 @@ async function loadBuffer(filename) {
 /**
  * 再生
  */
-export async function play(buttonId, filename, fadeIn = { enabled: false, duration: 1 }, loop = false) {
+export async function play(buttonId, filename, fadeIn = { enabled: false, duration: 1 }, fadeOut = { enabled: false, duration: 1 }, loop = false) {
   const context = getContext();
   if (context.state === 'suspended') await context.resume();
 
+  // 最新のリクエストであることを示すトークンを発行
+  const token = Symbol();
+  pendingTokens[buttonId] = token;
+
+  // 既存の再生を即座に停止（競合回避のため0秒停止）
   stop(buttonId, { enabled: false, duration: 0 });
 
   const buffer = await loadBuffer(filename);
+
+  // 非同期ロード中に新しいリクエストが来たら、自分はキャンセル
+  if (pendingTokens[buttonId] !== token) return;
+
   const source = context.createBufferSource();
   const gainNode = context.createGain();
 
@@ -56,35 +67,57 @@ export async function play(buttonId, filename, fadeIn = { enabled: false, durati
   }
 
   source.start(0);
-  sources[buttonId] = { source, gainNode, startTime: context.currentTime, buffer, loop };
+  sources[buttonId] = { source, gainNode, startTime: context.currentTime, buffer, loop, fadeOut };
 
   source.onended = () => {
-    // ループ中は onended は発火しない
-    delete sources[buttonId];
+    // ループ中は onended は発火しない。フェードアウト停止時も here に来ない（setTimeoutで自ら管理）
+    if (sources[buttonId] && sources[buttonId].source === source) {
+      delete sources[buttonId];
+    }
   };
 }
 
 /**
  * 停止
  */
-export function stop(buttonId, fadeOut = { enabled: false, duration: 1 }) {
+export function stop(buttonId, fadeOutOverride = null) {
   const entry = sources[buttonId];
   if (!entry) return;
 
+  const fadeOut = fadeOutOverride || entry.fadeOut || { enabled: false, duration: 0 };
   const { source, gainNode } = entry;
   const context = getContext();
 
   if (fadeOut.enabled && fadeOut.duration > 0) {
     gainNode.gain.setValueAtTime(gainNode.gain.value, context.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0, context.currentTime + fadeOut.duration);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + fadeOut.duration);
     setTimeout(() => {
-      try { source.stop(); } catch (_) {}
-      delete sources[buttonId];
+      if (sources[buttonId] && sources[buttonId].source === source) {
+        try { source.stop(); } catch (_) {}
+        delete sources[buttonId];
+      }
     }, fadeOut.duration * 1000);
   } else {
     try { source.stop(); } catch (_) {}
     delete sources[buttonId];
   }
+}
+
+/**
+ * 全停止 (AllKill)
+ * 各ボタンの設定を活かしつつ、最大フェード時間を制限
+ */
+export function stopAll(maxFadeDuration = 1) {
+  Object.keys(sources).forEach(buttonId => {
+    const entry = sources[buttonId];
+    const fade = { ...entry.fadeOut };
+    if (fade.enabled && fade.duration > maxFadeDuration) {
+      fade.duration = maxFadeDuration;
+    }
+    stop(buttonId, fade);
+  });
+  // ロード待ちも全てキャンセル
+  Object.keys(pendingTokens).forEach(id => delete pendingTokens[id]);
 }
 
 export function isPlaying(buttonId) {
