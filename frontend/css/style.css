@@ -73,6 +73,37 @@ header button.header-btn {
 /* ==============================
    再生画面 - レスポンシブグリッド
    ============================== */
+#grid-container {
+  position: relative;
+  min-height: 200px;
+}
+
+#loading-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(43, 36, 51, 0.8);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin: 16px;
+  cursor: pointer;
+}
+
+#loading-text {
+  background: #b39ddb;
+  color: #1a1520;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+
 #grid {
   display: grid;
   /* 最小120px、画面幅に合わせて自動調整 */

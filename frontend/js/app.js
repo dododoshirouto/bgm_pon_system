@@ -27,7 +27,23 @@ async function init() {
   await loadButtons();
   renderGrid();
   const files = [...new Set(buttons.filter(b => b.file).map(b => b.file))];
-  preloadAll(files);
+  
+  const overlay = document.getElementById('loading-overlay');
+  const text = document.getElementById('loading-text');
+
+  if (files.length === 0) {
+    overlay.style.display = 'none';
+    window.isAudioLoading = false;
+  } else {
+    overlay.addEventListener('click', async () => {
+      unlockAudio();
+      text.textContent = '読み込み中...';
+      await preloadAll(files);
+      overlay.style.display = 'none';
+      window.isAudioLoading = false;
+    }, { once: true });
+  }
+
   startPolling();
   requestAnimationFrame(updateProgress);
 

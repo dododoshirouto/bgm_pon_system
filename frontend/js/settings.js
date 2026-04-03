@@ -298,7 +298,6 @@ async function init() {
   const uploadBox = document.getElementById('upload-box');
   const fileInput = document.getElementById('file-input');
 
-  uploadBox.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', e => {
     [...e.target.files].forEach(uploadFile);
     fileInput.value = '';
@@ -314,3 +313,11 @@ async function init() {
 }
 
 init();
+
+// 親画面(app.js側)がオーディオローディング中なら、曲アサインのセレクトをブロックする
+setInterval(() => {
+  const isLoading = window.parent && window.parent.isAudioLoading;
+  document.querySelectorAll('.select-file').forEach(sel => {
+    sel.disabled = !!isLoading;
+  });
+}, 500);

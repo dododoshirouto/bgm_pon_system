@@ -21,7 +21,12 @@
     </div>
   </header>
 
-  <div id="grid"></div>
+  <div id="grid-container">
+    <div id="grid"></div>
+    <div id="loading-overlay">
+      <div id="loading-text">タップして開始</div>
+    </div>
+  </div>
 
   <!-- 設定モーダル（iframeで開くので再生が止まらない） -->
   <div id="settings-modal">
@@ -39,6 +44,8 @@
   </footer>
 
   <script>
+    window.isAudioLoading = true;
+
     if ('addEventListener' in document) {
       document.addEventListener('DOMContentLoaded', function () {
         FastClick.attach(document.body);
