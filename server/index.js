@@ -6,7 +6,11 @@ const audioRouter = require('./routes/audio');
 const buttonsRouter = require('./routes/buttons');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+const args = process.argv.slice(2);
+const portIndex = args.indexOf('--port');
+const argPort = (portIndex !== -1 && args[portIndex + 1]) ? parseInt(args[portIndex + 1], 10) : null;
+const PORT = argPort || process.env.PORT || 3000;
 
 // データディレクトリの初期化
 const dataDir = path.join(__dirname, 'data');
