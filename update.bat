@@ -4,6 +4,6 @@ setlocal
 
 git fetch
 git pull
-npm install
+npm update
 
 endlocal
