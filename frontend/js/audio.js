@@ -35,7 +35,7 @@ async function loadBuffer(filename) {
 /**
  * 再生
  */
-export async function play(buttonId, filename, fadeIn = { enabled: false, duration: 1 }, fadeOut = { enabled: false, duration: 1 }, loop = false) {
+export async function play(buttonId, filename, fadeIn = { enabled: false, duration: 1 }, fadeOut = { enabled: false, duration: 1 }, loop = false, stopTimer = 0) {
   const context = getContext();
   if (context.state === 'suspended') await context.resume();
 
@@ -66,8 +66,21 @@ export async function play(buttonId, filename, fadeIn = { enabled: false, durati
     gainNode.gain.setValueAtTime(1, context.currentTime);
   }
 
+  let timerId = null;
+  let stopTimerTarget = null;
+  if (stopTimer > 0 && (loop || buffer.duration >= stopTimer)) {
+    stopTimerTarget = context.currentTime + stopTimer;
+    const fadeDur = fadeOut.enabled ? fadeOut.duration : 0;
+    const waitTime = Math.max(0, stopTimer - fadeDur);
+    timerId = setTimeout(() => {
+      if (sources[buttonId] && sources[buttonId].source === source) {
+        stop(buttonId, fadeOut, true);
+      }
+    }, waitTime * 1000);
+  }
+
   source.start(0);
-  sources[buttonId] = { source, gainNode, startTime: context.currentTime, buffer, loop, fadeOut };
+  sources[buttonId] = { source, gainNode, startTime: context.currentTime, buffer, loop, fadeOut, stopTimerTarget, timerId };
 
   source.onended = () => {
     // ループ中は onended は発火しない。フェードアウト停止時も here に来ない（setTimeoutで自ら管理）
@@ -80,13 +93,18 @@ export async function play(buttonId, filename, fadeIn = { enabled: false, durati
 /**
  * 停止
  */
-export function stop(buttonId, fadeOutOverride = null) {
+export function stop(buttonId, fadeOutOverride = null, isAuto = false) {
   const entry = sources[buttonId];
   if (!entry) return;
 
   const fadeOut = fadeOutOverride || entry.fadeOut || { enabled: false, duration: 0 };
-  const { source, gainNode } = entry;
+  const { source, gainNode, timerId } = entry;
+  if (timerId) clearTimeout(timerId);
   const context = getContext();
+
+  if (isAuto) {
+    entry.autoStopping = true;
+  }
 
   if (fadeOut.enabled && fadeOut.duration > 0) {
     entry.stopping = true;
@@ -132,7 +150,7 @@ export function isPlaying(buttonId) {
  */
 export function getProgress(buttonId) {
   const entry = sources[buttonId];
-  if (!entry || entry.stopping) return null;
+  if (!entry || (entry.stopping && !entry.autoStopping)) return null;
 
   const context = getContext();
   const rawElapsed = context.currentTime - entry.startTime;
@@ -142,7 +160,12 @@ export function getProgress(buttonId) {
   const elapsed = entry.loop ? rawElapsed % duration : Math.min(rawElapsed, duration);
   const remaining = Math.max(0, duration - elapsed);
 
-  return { elapsed, duration, remaining, loop: entry.loop };
+  let timerRemaining = null;
+  if (entry.stopTimerTarget) {
+    timerRemaining = Math.max(0, entry.stopTimerTarget - context.currentTime);
+  }
+
+  return { elapsed, duration, remaining, loop: entry.loop, timerRemaining };
 }
 
 /**

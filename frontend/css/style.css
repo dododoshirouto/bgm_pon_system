@@ -191,6 +191,17 @@ header button.header-btn {
   font-variant-numeric: tabular-nums;
 }
 
+/* 終了タイマー表示 */
+.pad-timer {
+  font-size: 11px;
+  color: #ffeb3b; /* 目立つ色 */
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(255, 235, 59, 0.5);
+  min-height: 14px;
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+
 /* ==============================
    設定モーダル（iframe）
    ============================== */

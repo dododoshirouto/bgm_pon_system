@@ -93,12 +93,24 @@ function updateProgress() {
     const prog = getProgress(id);
     const bar = el.querySelector('.pad-progress');
     const timeEl = el.querySelector('.pad-time');
+    const timerEl = el.querySelector('.pad-timer');
 
-    if (!prog || !bar || !timeEl) return;
+    if (!prog || !bar || !timeEl || !timerEl) {
+      if (el.classList.contains('playing')) {
+        updatePadState(id, false);
+      }
+      return;
+    }
 
     const pct = (prog.elapsed / prog.duration) * 100;
     bar.style.width = pct + '%';
     timeEl.textContent = prog.loop ? `↻ ${formatTime(prog.remaining)}` : formatTime(prog.remaining);
+    
+    if (prog.timerRemaining !== null) {
+      timerEl.textContent = `⏳ ${formatTime(prog.timerRemaining)}`;
+    } else {
+      timerEl.textContent = '';
+    }
   });
   requestAnimationFrame(updateProgress);
 }
@@ -140,10 +152,14 @@ function renderGrid() {
     const timeEl = document.createElement('span');
     timeEl.className = 'pad-time';
 
+    const timerEl = document.createElement('span');
+    timerEl.className = 'pad-timer';
+
     el.appendChild(icon);
     el.appendChild(label);
     el.appendChild(progressWrap);
     el.appendChild(timeEl);
+    el.appendChild(timerEl);
     grid.appendChild(el);
 
     if (!btn.file) return;
@@ -168,7 +184,7 @@ async function handleToggle(id) {
     stop(id, btn.fadeOut);
     updatePadState(id, false);
   } else {
-    await play(id, btn.file, btn.fadeIn, btn.fadeOut, btn.loop);
+    await play(id, btn.file, btn.fadeIn, btn.fadeOut, btn.loop, btn.stopTimer || 0);
     updatePadState(id, true);
   }
 }
@@ -177,7 +193,7 @@ async function handlePlay(id) {
   unlockAudio();
   const btn = buttons.find(b => b.id === id);
   if (!btn || !btn.file) return;
-  await play(id, btn.file, btn.fadeIn, btn.fadeOut, btn.loop);
+  await play(id, btn.file, btn.fadeIn, btn.fadeOut, btn.loop, btn.stopTimer || 0);
   updatePadState(id, true);
 }
 
@@ -196,6 +212,8 @@ function updatePadState(id, playing) {
   if (icon) icon.textContent = playing ? '■' : '▶';
   const timeEl = el.querySelector('.pad-time');
   if (timeEl && !playing) timeEl.textContent = '';
+  const timerEl = el.querySelector('.pad-timer');
+  if (timerEl && !playing) timerEl.textContent = '';
   const bar = el.querySelector('.pad-progress');
   if (bar && !playing) bar.style.width = '0%';
 }

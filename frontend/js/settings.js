@@ -187,11 +187,35 @@ function buildPanel(btn) {
       </div>
     </div>
     <div class="panel-field">
+      <label>終了タイマー 秒数 (0で無効)</label>
+      <div class="field-row">
+        <input type="number" class="input-stoptimer-sec" value="${btn.stopTimer ?? 0}" min="0" step="1">
+        <span class="unit">秒</span>
+        <span class="timer-status-icon" style="margin-left:8px; font-size:16px; color: ${btn.stopTimer > 0 ? '#a8d8b9' : '#7b6b8a'};">
+          ${btn.stopTimer > 0 ? '⏳(有効)' : '➖(無効)'}
+        </span>
+      </div>
+    </div>
+    <div class="panel-field">
       <label>カラー</label>
       <div class="color-swatch-row">${colorSwatches}</div>
     </div>
     <button class="btn-save">保存</button>
   `;
+
+  // イベントリスナの追加
+  const stopTimerInput = panel.querySelector('.input-stoptimer-sec');
+  const stopTimerIcon = panel.querySelector('.timer-status-icon');
+  stopTimerInput.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value) || 0;
+    if (val > 0) {
+      stopTimerIcon.textContent = '⏳(有効)';
+      stopTimerIcon.style.color = '#a8d8b9';
+    } else {
+      stopTimerIcon.textContent = '➖(無効)';
+      stopTimerIcon.style.color = '#7b6b8a';
+    }
+  });
 
   // カラースウォッチ選択
   panel.querySelectorAll('.color-swatch').forEach(swatch => {
@@ -233,6 +257,7 @@ async function savePanel(panel, id) {
       enabled: btn.fadeOut?.enabled || false,
       duration: parseFloat(panel.querySelector('.input-fadeout-sec').value) || 1,
     },
+    stopTimer: parseFloat(panel.querySelector('.input-stoptimer-sec').value) || 0,
   };
 
   const saveBtn = panel.querySelector('.btn-save');
