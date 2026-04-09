@@ -2,10 +2,15 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
 
 const router = express.Router();
 
-const audioDir = path.join(__dirname, '../data/audio');
+const dataDir = path.join(__dirname, '../data');
+const audioDir = path.join(dataDir, 'audio');
+const tmpDir = path.join(dataDir, 'tmp');
+
+if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
 
 // multer は originalname を latin1 で渡すため UTF-8 に変換する
 function toUtf8(str) {
@@ -13,7 +18,7 @@ function toUtf8(str) {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, audioDir),
+  destination: (req, file, cb) => cb(null, tmpDir),
   filename: (req, file, cb) => {
     cb(null, toUtf8(file.originalname));
   },
@@ -43,7 +48,29 @@ router.get('/', (req, res) => {
 // 音声ファイルアップロード
 router.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'ファイルがありません' });
-  res.json({ filename: req.file.filename });
+
+  const tempPath = req.file.path;
+  const originalName = req.file.filename;
+  const baseName = path.parse(originalName).name;
+  const finalName = `${baseName}.mp3`;
+  const outputPath = path.join(audioDir, finalName);
+
+  const bitrate = req.app.locals.bitrate || '128k';
+
+  ffmpeg(tempPath)
+    .audioChannels(2)
+    .audioBitrate(bitrate)
+    .toFormat('mp3')
+    .on('end', () => {
+      fs.unlink(tempPath, () => {});
+      res.json({ filename: finalName });
+    })
+    .on('error', (err) => {
+      console.error('FFmpeg Error:', err);
+      fs.unlink(tempPath, () => {});
+      res.status(500).json({ error: 'エンコードに失敗しました', details: err.message });
+    })
+    .save(outputPath);
 });
 
 // 音声ファイル削除

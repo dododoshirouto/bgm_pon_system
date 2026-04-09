@@ -8,16 +8,25 @@ echo  BGM PON SYSTEM - セットアップ
 echo =============================
 echo.
 
-where node >nul 2>nul
+where git >nul 2>nul
 if %errorlevel% neq 0 (
-  echo [ERROR] Node.js がインストールされていません。
-  echo winget install OpenJS.NodeJS でインストールしてください。
-  pause
-  endlocal
-  exit /b 1
+  echo Gitをインストール中...
+  winget install -e --id Git.Git --accept-package-agreements --accept-source-agreements
 )
 
-echo [OK] Node.js が見つかりました。
+where node >nul 2>nul
+if %errorlevel% neq 0 (
+  echo Node.jsをインストール中...
+  winget install -e --id OpenJS.NodeJS --accept-package-agreements --accept-source-agreements
+)
+
+where ffmpeg >nul 2>nul
+if %errorlevel% neq 0 (
+  echo FFmpegをインストール中...
+  winget install -e --id Gyan.FFmpeg --accept-package-agreements --accept-source-agreements
+)
+
+echo 環境のセットアップが完了しました。
 echo.
 echo 依存パッケージをインストール中...
 cd /d "%~dp0server"

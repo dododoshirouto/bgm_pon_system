@@ -12,6 +12,11 @@ const portIndex = args.indexOf('--port');
 const argPort = (portIndex !== -1 && args[portIndex + 1]) ? parseInt(args[portIndex + 1], 10) : null;
 const PORT = argPort || process.env.PORT || 3000;
 
+const bitrateIndex = args.indexOf('--bitrate');
+const argBitrate = (bitrateIndex !== -1 && args[bitrateIndex + 1]) ? args[bitrateIndex + 1] : null;
+const BITRATE = argBitrate || process.env.BITRATE || '128k';
+app.locals.bitrate = BITRATE;
+
 // データディレクトリの初期化
 const dataDir = path.join(__dirname, 'data');
 const audioDir = path.join(dataDir, 'audio');

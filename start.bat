@@ -1,12 +1,19 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: ポート引数のパース
+:: 引数のパース
 set PORT=3000
+set BITRATE=128k
 :parse_args
 if "%~1"=="" goto end_parse
 if /i "%~1"=="--port" (
     set PORT=%~2
+    shift
+    shift
+    goto parse_args
+)
+if /i "%~1"=="--bitrate" (
+    set BITRATE=%~2
     shift
     shift
     goto parse_args
@@ -34,7 +41,7 @@ echo =============================
 echo.
 
 cd /d "%~dp0server"
-node index.js --port %PORT%
+node index.js --port %PORT% --bitrate %BITRATE%
 endlocal
 cd /d "%~dp0"
 pause
